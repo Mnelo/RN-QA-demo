@@ -1,6 +1,5 @@
-/**
- * @format
- */
+import './gesture-handler';
+import 'react-native-gesture-handler'; // 必须首行导入
 
 import {AppRegistry} from 'react-native';
 import App from './App';
