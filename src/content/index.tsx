@@ -1,40 +1,33 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import Menu from './menu';
 import QA from './qa';
 import Header from './header';
-// import { Drawer, Button, Text } from '@ant-design/react-native';
+import { Drawer } from '@ant-design/react-native';
 
-// let test: any;
-const Content = (props: any): React.JSX.Element => {
-    const { drawer } = props?.route?.params;
+const Content = (): React.JSX.Element => {
+    const [drawer, setDrawer] = useState(null);
 
-    // const sidebar = (
-    //     <View style={{ flex: 1 }}>
-    //         <Text>123456</Text>
-    //     </View>
-    // );
 
     return (
-        <View style={{ flex: 1 }}>
-            {/* <Drawer
-                sidebar={sidebar}
-                position="left"
-                open={false}
-                drawerRef={(el: any) => (test = el)}
-                drawerBackgroundColor="#ccc"
-            >
-                <View style={{ flex: 1, marginTop: 114, padding: 8 }}>
-                    <Button onPress={() => {
-                        test.openDrawer();
-                    }}>
-                        Open drawer
-                    </Button>
-                </View>
-            </Drawer> */}
+        <GestureHandlerRootView>
+            <View style={{ flex: 1 }}>
+                <Drawer
+                    sidebar={<Menu />}
+                    position="left"
+                    open={false}
+                    drawerRef={(el: any) => setDrawer(el)}
+                    drawerBackgroundColor="white"
+                >
+                    <View style={{ flex: 1 }}>
+                        <Header drawer={drawer} />
+                        <QA />
+                    </View>
+                </Drawer>
+            </View>
+        </GestureHandlerRootView>
 
-            <Header drawer={drawer} />
-            <QA />
-        </View>
 
     );
 };

@@ -11,7 +11,7 @@ const Header = (props: any): React.JSX.Element => {
                 style={[styles.button]}
                 name="bars"
                 onPress={() => {
-                    drawer?.current?.openDrawer();
+                    drawer.openDrawer();
                 }}
             />
 
