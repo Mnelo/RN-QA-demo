@@ -9,7 +9,6 @@ import { Drawer } from '@ant-design/react-native';
 const Content = (): React.JSX.Element => {
     const [drawer, setDrawer] = useState(null);
 
-
     return (
         <GestureHandlerRootView>
             <View style={{ flex: 1 }}>

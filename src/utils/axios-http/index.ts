@@ -17,8 +17,8 @@ const { CancelToken } = axios;
 const sources: any = {};
 
 const service: any = axios.create({
-  baseURL: '/',
-  // baseURL: 'http://10.66.52.15:7001/',
+  // baseURL: '/',
+  baseURL: 'http://10.66.52.15:7001/',
   timeout: 60000, // 超时取消请求
 });
 

@@ -1,8 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
 import { View, StyleSheet, Text } from 'react-native';
 import { Form, Input, Button } from '@ant-design/react-native';
+import Api from '@/services/index';
 
 const Login = (): React.JSX.Element => {
+    const [loading, setLoading] = useState(false);
+    const navigation: any = useNavigation();
     const [form] = Form.useForm();
     const number = Form.useWatch('number', form);
 
@@ -10,8 +14,19 @@ const Login = (): React.JSX.Element => {
         form.submit();
     };
 
-    const onFinish = (values: any) => {
-        console.log('Success:', values);
+    const onFinish = async (values: any): Promise<any> => {
+        setLoading(true);
+
+        const res = await Api.login(values);
+
+        setLoading(false);
+
+        if (res?.status === 200 && res?.data?.userid) {
+            navigation.navigate('Content');
+            return;
+        }
+
+        navigation.navigate('VerifyCode');
     };
 
     return (
@@ -31,7 +46,7 @@ const Login = (): React.JSX.Element => {
                 >
                     <Input
                         type="number"
-                        style={styles.input}
+                        inputStyle={styles.input}
                         maxLength={11}
                         placeholder="请输入手机号"
                         onChange={(e: any) => {
@@ -42,13 +57,15 @@ const Login = (): React.JSX.Element => {
                     />
                 </Form.Item>
 
-                <Form.Item style={styles.transparent}>
+                <Form.Item style={[styles.transparent, { height: 80 }]}>
                     <Button
                         type={number?.toString()?.length === 11 ? 'primary' : undefined}
                         style={styles.next}
                         disabled={number?.toString()?.length !== 11}
-                        onPress={onSubmit}>
-                        登录
+                        onPress={onSubmit}
+                        loading={loading}
+                    >
+                        {loading ? '' : '下一步'}
                     </Button>
                 </Form.Item>
             </Form>
@@ -70,9 +87,10 @@ const styles = StyleSheet.create({
     },
     input: {
         paddingLeft: '4%',
-        height: 40,
+        height: 80,
         backgroundColor: 'rgba(199,199,199,0.3)',
         borderRadius: 10,
+        lineHeight: 30,
     },
     next: {
         borderRadius: 10,
