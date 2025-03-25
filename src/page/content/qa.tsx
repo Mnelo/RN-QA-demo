@@ -2,15 +2,21 @@ import React, { useEffect, useRef, useState } from 'react';
 import { StyleSheet, ScrollView, StatusBar, useColorScheme, View, Animated, Keyboard, Text } from 'react-native';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 import { Input, Button, Icon, Toast, Provider } from '@ant-design/react-native';
+import EventSource from 'react-native-sse';
+import Markdown from 'react-native-simple-markdown';
+import { type List } from './qa.d';
+import apiService from '@/utils/axios-http';
 
 const QA = (): React.JSX.Element => {
     const isDarkMode = useColorScheme() === 'dark';
     const [word, setWord] = useState('');
-    const [list, setList] = useState<any>([]);
+    const [list, setList] = useState<List[]>([]);
+    const [qamessage, setQamessage] = useState('');
+    const [isDone, setIsDone] = useState(true);
     const [inputHeight, setInputHeight] = useState(45);
     const [boothHeight, setBoothHeight] = useState(100);
     const bottomPosition = useRef(new Animated.Value(0));
-    const scrollViewRef = useRef<any>(null);
+    const scrollViewRef = useRef(null);
 
     useEffect(() => {
         const keyboardDidShowListener = Keyboard.addListener(
@@ -35,7 +41,7 @@ const QA = (): React.JSX.Element => {
         };
     }, []);
 
-    const animateBottom = (toValue: any): void => {
+    const animateBottom = (toValue: number): void => {
         Animated.timing(bottomPosition.current, {
             toValue, // 目标位置
             duration: 250, // 动画持续时间，单位毫秒
@@ -63,23 +69,48 @@ const QA = (): React.JSX.Element => {
             return;
         }
 
+        setList((pre: List[]) => ([...pre, { type: 'user', data: word }]));
+
         setWord('');
-        const data = [
-            {
-                type: 'user',
-                value: word,
-            },
-            {
-                type: 'ai',
-                value: '尽请期待',
-            },
-        ];
+        setIsDone(false);
 
-        setList((pre: any) => ([...pre, ...data]));
+        const es = new EventSource(`${apiService.baseURL}/api/v1/deepseek`, {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ content: word }),
+            method: 'POST',
+        });
 
-        setTimeout(() => {
-            scrollViewRef.current?.scrollToEnd({ animated: false });
-        }, 50);
+        // es.addEventListener('open', () => {
+        //     console.log('Open SSE connection.');
+        // });
+
+        let newMessage = '';
+
+        es.addEventListener('message', (e: any) => {
+            const res = JSON.parse(e.data);
+            newMessage += res.content;
+
+            setQamessage((pre) => (pre + res.content));
+
+            if (res.done) {
+                es.close();
+                setIsDone(true);
+
+                setList((pre: List[]) => ([...pre, { type: 'ai', data: newMessage }]));
+
+                setQamessage('');
+            }
+        });
+
+        es.addEventListener('error', () => {
+            es.close();
+        });
+
+        // es.addEventListener('close', () => {
+        //     console.log('Close SSE connection.');
+        // });
     };
 
     const styles = StyleSheet.create({
@@ -161,14 +192,26 @@ const QA = (): React.JSX.Element => {
                     backgroundColor={{ backgroundColor: isDarkMode ? Colors.darker : Colors.lighter } as any}
                 />
 
-
                 <ScrollView style={styles.content} ref={scrollViewRef}>
                     <View style={{ flexDirection: 'column', direction: 'ltr' }}>
                         {list?.map((item: any, index: number) =>
                             <View key={index.toString()}>
-                                <Text style={[item.type === 'user' ? styles.userInput : styles.aiInput]}>{item.value}</Text>
+                                {
+                                    item.type === 'user' ?
+                                        <Text style={[styles.userInput]}>
+                                            {item.data}
+                                        </Text> : <Text style={[styles.aiInput]}>
+                                            <Markdown>{item.data}</Markdown>
+                                        </Text>
+                                }
                             </View>
                         )}
+
+                        {isDone ? null : <View>
+                            <Text style={[styles.aiInput]}>
+                                <Markdown>{qamessage}</Markdown>
+                            </Text>
+                        </View>}
                     </View>
                 </ScrollView>
 
@@ -188,8 +231,7 @@ const QA = (): React.JSX.Element => {
                         <Icon name="send" style={styles.icon} />
                     </Button>
                 </Animated.View>
-            </View >
-
+            </View>
         </Provider>
     );
 };

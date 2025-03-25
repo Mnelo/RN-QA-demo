@@ -1,21 +1,36 @@
-import React, { useEffect } from 'react';
-import { View } from '@ant-design/react-native';
-import Api from '@/services/index';
+import React from 'react';
+import { View, StyleSheet } from 'react-native';
+import { Button } from '@ant-design/react-native';
+import { useNavigation } from '@react-navigation/native';
+import * as Keychain from 'react-native-keychain';
 
 const UserInfo = (): React.JSX.Element => {
-    useEffect(() => {
-        getList();
-    }, []);
+    const navigation: any = useNavigation();
 
-    const getList = async (): Promise<any> => {
-        const res = await Api.getInfo();
-        console.log(res);
+    const loginOut = async (): Promise<any> => {
+        await Keychain.resetGenericPassword({ service: 'rn-qa' });
+
+        navigation.navigate('login');
+
     };
 
-
     return (
-        <View>UserInfo</View>
+        <View style={styles.info}>
+            <Button style={styles.loginout} onPress={loginOut}>退出登录</Button>
+        </View>
     );
 };
+
+const styles = StyleSheet.create({
+    info: {
+        flex: 1,
+        alignItems: 'center',
+        padding: '4%',
+    },
+    loginout: {
+        width: '100%',
+    },
+});
+
 
 export default UserInfo;

@@ -1,30 +1,31 @@
 import React, { useState } from 'react';
+import { observer } from 'mobx-react';
 import { useNavigation } from '@react-navigation/native';
 import { View, StyleSheet, Text } from 'react-native';
 import { Form, Input, Button } from '@ant-design/react-native';
 import Api from '@/services/index';
+import { useStore } from '@/mobx/useStore';
 
 const Login = (): React.JSX.Element => {
     const [loading, setLoading] = useState(false);
     const navigation: any = useNavigation();
     const [form] = Form.useForm();
-    const number = Form.useWatch('number', form);
+    const phone = Form.useWatch('phone', form);
+    const PhoneStore = useStore('PhoneStore');
 
     const onSubmit = () => {
         form.submit();
     };
 
     const onFinish = async (values: any): Promise<any> => {
+        //mobx保存手机号
+        PhoneStore.set(values.phone);
+
         setLoading(true);
 
-        const res = await Api.login(values);
+        await Api.getCode({ phone: values.phone });
 
         setLoading(false);
-
-        if (res?.status === 200 && res?.data?.userid) {
-            navigation.navigate('Content');
-            return;
-        }
 
         navigation.navigate('VerifyCode');
     };
@@ -40,7 +41,7 @@ const Login = (): React.JSX.Element => {
                 onFinish={onFinish}
             >
                 <Form.Item
-                    name="number"
+                    name="phone"
                     style={[styles.transparent, { height: 60 }]}
                     validateFirst={true}
                 >
@@ -51,7 +52,7 @@ const Login = (): React.JSX.Element => {
                         placeholder="请输入手机号"
                         onChange={(e: any) => {
                             if (e.target.value.length > 11) {
-                                form.setFieldValue('number', e.target.value.substring(0, 11));
+                                form.setFieldValue('phone', e.target.value.substring(0, 11));
                             }
                         }}
                     />
@@ -59,9 +60,9 @@ const Login = (): React.JSX.Element => {
 
                 <Form.Item style={[styles.transparent, { height: 80 }]}>
                     <Button
-                        type={number?.toString()?.length === 11 ? 'primary' : undefined}
+                        type={phone?.toString()?.length === 11 ? 'primary' : undefined}
                         style={styles.next}
-                        disabled={number?.toString()?.length !== 11}
+                        disabled={phone?.toString()?.length !== 11}
                         onPress={onSubmit}
                         loading={loading}
                     >
@@ -98,4 +99,4 @@ const styles = StyleSheet.create({
 });
 
 
-export default Login;
+export default observer(Login);

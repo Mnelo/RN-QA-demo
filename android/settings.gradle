@@ -3,4 +3,5 @@ plugins { id("com.facebook.react.settings") }
 extensions.configure(com.facebook.react.ReactSettingsExtension){ ex -> ex.autolinkLibrariesFromCommand() }
 rootProject.name = 'RNQAdemo'
 include ':app'
+include ':react-native-keychain'
 includeBuild('../node_modules/@react-native/gradle-plugin')

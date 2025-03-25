@@ -1,61 +1,73 @@
-/* eslint-disable */
 import React, { useEffect, useState } from 'react';
+import { observer } from 'mobx-react';
 import { View, Text, StyleSheet } from 'react-native';
-import { Icon, Input } from '@ant-design/react-native';
+import { Icon, Input, Toast, Provider } from '@ant-design/react-native';
 import { useNavigation } from '@react-navigation/native';
 import Api from '@/services/index';
+import { useStore } from '@/mobx/useStore';
+import * as Keychain from 'react-native-keychain';
 
 const VerifyCode = (): React.JSX.Element => {
     const [loading, setLoading] = useState(false);
     const [number, setNumber] = useState<any>(undefined);
     const navigation: any = useNavigation();
+    const PhoneStore = useStore('PhoneStore');
 
     useEffect(() => {
         if (number && number.length === 4) {
             send(number);
         }
-
     }, [number]);
 
-    const send = async (number: string): Promise<any> => {
+    const send = async (code: string): Promise<any> => {
         if (loading) {
             return;
-        };
+        }
 
         setLoading(true);
 
-        // const res = await Api.getCode({ number });
-
-        const res = await Api.createUser({ number });
+        const res = await Api.createUser({ phone: PhoneStore.phone, code });
 
         setLoading(false);
 
-        console.log(res);
+        if (res.status === 200 && res.error) {
+            Toast.fail({
+                content: res.error,
+                position: 'center',
+            });
+        }
+
+        if (res.status === 200) {
+            await Keychain.setGenericPassword(res.data.phone, res.data.userid, { service: 'rn-qa' });
+            navigation.replace('Content');
+        }
     };
 
     return (
-        <View>
-            <Icon
-                name="arrow-left"
-                style={styles.back}
-                onPress={() => {
-                    navigation.goBack();
-                }}
-            />
+        <Provider>
+            <View style={{ flex: 1 }}>
+                <Icon
+                    name="arrow-left"
+                    style={styles.back}
+                    onPress={() => {
+                        navigation.goBack();
+                    }}
+                />
 
-            <Text style={styles.tip}>请输入验证码</Text>
+                <Text style={styles.tip}>请输入验证码</Text>
 
-            <Input
-                style={styles.input}
-                textAlign="center"
-                value={number}
-                type='number'
-                maxLength={4}
-                onChange={(e: any) => {
-                    const number = e.target.value;
-                    setNumber(number.toString().length > 4 ? number.substring(0, 4) : number);
-                }} />
-        </View>
+                <Input
+                    inputStyle={styles.input}
+                    textAlign="center"
+                    value={number}
+                    type="number"
+                    maxLength={4}
+                    onChange={(e: any) => {
+                        const code = e.target.value;
+                        setNumber(code.toString().length > 4 ? code.substring(0, 4) : code);
+                    }} />
+            </View>
+        </Provider>
     );
 };
 
@@ -73,9 +85,10 @@ const styles = StyleSheet.create({
     },
     input: {
         alignSelf: 'center',
-        width: '92%',
-        height: 40,
-        backgroundColor: 'rgba(199,199,199,0.3)',
+        marginHorizontal: '4%',
+        height: 50,
+        borderBottomColor: 'rgba(199,199,199,0.3)',
+        borderBottomWidth: 2,
         borderRadius: 10,
         lineHeight: 30,
         marginTop: 20,
@@ -83,4 +96,4 @@ const styles = StyleSheet.create({
 });
 
 
-export default VerifyCode;
+export default observer(VerifyCode);

@@ -16,9 +16,12 @@ const { CancelToken } = axios;
 
 const sources: any = {};
 
+// cosnt baseURL = '/';
+const baseURL = 'http://47.108.85.15:7001';
+// const baseURL = 'http://10.66.52.15:7001';
+
 const service: any = axios.create({
-  // baseURL: '/',
-  baseURL: 'http://10.66.52.15:7001/',
+  baseURL,
   timeout: 60000, // 超时取消请求
 });
 
@@ -152,4 +155,4 @@ const axiosPut = async (
   return await request(url, params, config, 'put');
 };
 
-export default { sources, axiosGet, axiosDelete, axiosPost, axiosPut };
+export default { sources, axiosGet, axiosDelete, axiosPost, axiosPut, baseURL };

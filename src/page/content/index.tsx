@@ -11,7 +11,7 @@ const Content = (): React.JSX.Element => {
 
     return (
         <GestureHandlerRootView>
-            <View style={{ flex: 1 }}>
+            <View style={{ flex: 1 }} >
                 <Drawer
                     sidebar={<Menu />}
                     position="left"
@@ -26,8 +26,6 @@ const Content = (): React.JSX.Element => {
                 </Drawer>
             </View>
         </GestureHandlerRootView>
-
-
     );
 };
 
