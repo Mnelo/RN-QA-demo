@@ -16,7 +16,7 @@ const QA = (): React.JSX.Element => {
     const [inputHeight, setInputHeight] = useState(45);
     const [boothHeight, setBoothHeight] = useState(100);
     const bottomPosition = useRef(new Animated.Value(0));
-    const scrollViewRef = useRef(null);
+    const scrollViewRef = useRef<any>(null);
 
     useEffect(() => {
         const keyboardDidShowListener = Keyboard.addListener(
@@ -102,6 +102,10 @@ const QA = (): React.JSX.Element => {
 
                 setQamessage('');
             }
+
+            setTimeout(() => {
+                scrollViewRef.current?.scrollToEnd({ animated: false });
+            }, 50);
         });
 
         es.addEventListener('error', () => {

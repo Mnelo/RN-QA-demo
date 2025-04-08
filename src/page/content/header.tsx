@@ -1,24 +1,35 @@
 import React from 'react';
 import { StyleSheet, View, Text } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { Icon } from '@ant-design/react-native';
 
 const Header = (props: any): React.JSX.Element => {
     const { drawer } = props;
+    const navigation: any = useNavigation();
 
     return (
-        <View style={[styles.container]}>
-            <Icon
-                style={[styles.button]}
-                name="bars"
-                onPress={() => {
-                    drawer.openDrawer();
-                }}
-            />
+        <View>
+            <View style={[styles.container]}>
+                <Icon
+                    style={[styles.button]}
+                    name="bars"
+                    onPress={() => {
+                        drawer.openDrawer();
+                    }}
+                />
 
-            <Text style={[styles.textName]}>AI问答</Text>
+                <Text style={[styles.textName]}>AI问答</Text>
 
-            <Text />
+                <Icon
+                    style={[styles.camera]}
+                    name="scan"
+                    onPress={() => {
+                        navigation.navigate('CameraBox');
+                    }}
+                />
+            </View>
         </View>
+
 
     );
 };
@@ -39,6 +50,11 @@ const styles = StyleSheet.create({
     textName: {
         width: 60,
         fontWeight: 600,
+    },
+    camera: {
+        width: 20,
+        marginRight: '4%',
+        color: 'black',
     },
 });
 

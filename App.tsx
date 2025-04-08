@@ -7,6 +7,8 @@ import Login from '@/page/login';
 import VerifyCode from '@/page/login/verifycode';
 import Content from '@/page/content';
 import UserInfo from '@/page/userInfo';
+import CameraBox from '@/page/content/camera';
+import QrCode from '@/page/content/qrcode';
 
 const Stack = createNativeStackNavigator();
 
@@ -23,6 +25,8 @@ const App = (): React.JSX.Element => {
         />
         <Stack.Screen name="Content" component={Content} options={{ headerShown: false }} />
         <Stack.Screen name="UserInfo" component={UserInfo} options={{ title: '设置' }} />
+        <Stack.Screen name="CameraBox" component={CameraBox} options={{ headerShown: false }} />
+        <Stack.Screen name="QrCode" component={QrCode} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
