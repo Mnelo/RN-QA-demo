@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
         borderTopColor: '#ccc',
         height: '8%',
         minHeight: 40,
-        paddingTop: '6%',
+        paddingTop: '4%',
         paddingHorizontal: '10%',
     },
     imageBox: {

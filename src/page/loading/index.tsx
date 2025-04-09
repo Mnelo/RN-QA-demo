@@ -1,9 +1,9 @@
 import React, { useRef } from 'react';
-import { View, StyleSheet, Animated } from 'react-native';
-import { Icon } from '@ant-design/react-native';
+import { View, StyleSheet, Animated, Image, Easing } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import * as Keychain from 'react-native-keychain';
 import Api from '@/services/index';
+import loadingImage from '@/assets/loading.png';
 
 const Loading = (): React.JSX.Element => {
     const rotateValue = useRef(new Animated.Value(0)).current;
@@ -13,8 +13,9 @@ const Loading = (): React.JSX.Element => {
         Animated.loop(
             Animated.timing(rotateValue, {
                 toValue: 1,
-                duration: 3000, // 旋转一圈的时间
-                useNativeDriver: false, // 原生驱动提升性能
+                duration: 1500, // 旋转一圈的时间
+                useNativeDriver: true, // 原生驱动提升性能
+                easing: Easing.linear, // 匀速运动
             })
         ).start();
 
@@ -55,9 +56,8 @@ const Loading = (): React.JSX.Element => {
     return (
         <View style={styles.box}>
             <Animated.View style={{ transform: [{ rotate: interpolateRotation }] }}>
-                <Icon name="loading-3-quarters" size={30} color="rgba(16, 142, 233,1)" />
+                <Image source={loadingImage} />
             </Animated.View>
-
         </View>
     );
 };

@@ -3,8 +3,7 @@ import { StyleSheet, View, Text } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Icon } from '@ant-design/react-native';
 
-const Header = (props: any): React.JSX.Element => {
-    const { drawer } = props;
+const Header = (): React.JSX.Element => {
     const navigation: any = useNavigation();
 
     return (
@@ -14,7 +13,7 @@ const Header = (props: any): React.JSX.Element => {
                     style={[styles.button]}
                     name="bars"
                     onPress={() => {
-                        drawer.openDrawer();
+                        navigation.getParent('LeftDrawer').openDrawer();
                     }}
                 />
 
@@ -48,6 +47,7 @@ const styles = StyleSheet.create({
     textName: {
         width: 60,
         fontWeight: 600,
+        marginLeft: 20,
     },
     camera: {
         width: 20,
