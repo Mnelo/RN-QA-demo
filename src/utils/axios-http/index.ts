@@ -17,8 +17,8 @@ const { CancelToken } = axios;
 const sources: any = {};
 
 // cosnt baseURL = '/';
-// const baseURL = 'http://47.108.85.15:7001';
-const baseURL = 'http://10.66.52.15:7001';
+const baseURL = 'http://47.108.85.15:7001';
+// const baseURL = 'http://10.66.52.15:7001';
 // const baseURL = 'http://127.0.0.0:7001';
 
 const service: any = axios.create({

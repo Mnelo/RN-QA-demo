@@ -29,8 +29,6 @@ const Header = (props: any): React.JSX.Element => {
                 />
             </View>
         </View>
-
-
     );
 };
 
